@@ -1,0 +1,79 @@
+/* ===== Estilos gerais ===== */
+
+/* ===== Container ===== */
+.container {
+    max-width: 600px;
+    margin: 80px auto;
+    background-color: #ffffff;
+    border: 1px solid #00569d;
+    border-radius: 10px;
+    padding: 40px 30px;
+    box-shadow: 0 0 10px rgba(0, 86, 157, 0.1);
+}
+
+/* ===== Títulos ===== */
+h1 {
+    text-align: center;
+    color: #00569d;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+h2 {
+    text-align: center;
+    color: #0070c0;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+/* ===== Campos do formulário ===== */
+.form-control {
+    border: 1px solid #cbd6e2;
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 15px;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #00569d;
+    box-shadow: 0 0 4px rgba(0, 86, 157, 0.3);
+    outline: none;
+}
+
+/* ===== Botões ===== */
+.btn-primary {
+    background-color: #00569d;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #003d70;
+}
+
+.btn-warning {
+    background-color: #e6f0fa;
+    border: 1px solid #00569d;
+    color: #00569d;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.btn-warning:hover {
+    background-color: #d2e6fa;
+    color: #003d70;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 576px) {
+    .container {
+        padding: 25px 15px;
+    }
+}

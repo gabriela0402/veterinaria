@@ -1,11 +1,31 @@
-/* ===== Estilo da Tabela Azul e Branca ===== */
+/*Container Principal*/
+.container_cliente {
+    max-width: 1200px;
+    margin: 150px auto; /* distância da navbar */
+    background-color: #ffffff; 
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 255, 0.2);
+    overflow-x: auto; 
+}
+
+/*Título */
+.container_cliente h1 {
+    text-align: center;
+    color: #003366; 
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+/* Tabela*/
 .table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
-    font-family: "Mulish", Arial, sans-serif;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 255, 0.1);
+    margin-top: 15px;
 }
 
 /* Cabeçalho */
@@ -21,10 +41,10 @@
     text-transform: uppercase;
 }
 
-/* Linhas e células */
+/* Corpo da tabela */
 .table tbody tr {
     border-bottom: 1px solid #dee2e6;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease;
 }
 
 .table tbody tr:nth-child(even) {
@@ -41,7 +61,72 @@
     font-size: 15px;
 }
 
-/* Opcional: bordas mais sutis */
 .table th, .table td {
     border: 1px solid #dce3eb;
+}
+
+/* Botões */
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    margin: 10px 5px 0 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-warning {
+    background-color: #ffffff;
+    color: #2937f0;
+    border: 1px solid #007bff;
+}
+
+.btn-warning:hover {
+    background-color: #2937f0;
+    color: white;
+}
+
+/* Responsividade  */
+@media (max-width: 768px) {
+    .container_cliente {
+        max-width: 90%;
+        margin: 120px auto;
+        padding: 20px;
+    }
+
+    .container_cliente h1 {
+        font-size: 1.5rem;
+    }
+
+    .table th, .table td {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container_cliente {
+        max-width: 95%;
+        margin: 100px auto;
+        padding: 15px;
+    }
+
+    .container_cliente h1 {
+        font-size: 1.3rem;
+    }
+
+    .table th, .table td {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 8px 0;
+    }
 }

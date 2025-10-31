@@ -1,7 +1,7 @@
 <?php
     include 'includes/header.php';
 ?>
-<section class="vh-100 d-flex align-items-center" style="background-color: #f8f9fa;">
+<section class="d-flex align-items-center" style="background-color: #f8f9fa; padding-top: 100px; padding-bottom: 100px; min-height: 100vh;">
   <div class="container py-5">
     <div class="row align-items-center justify-content-center">
 
@@ -57,12 +57,11 @@
         </form>
       </div>
 
-      <!-- Coluna da imagem (à direita) -->
-      :
-
     </div>
   </div>
 </section>
+
+
 
 
 <?php

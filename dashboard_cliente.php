@@ -1,6 +1,18 @@
 <?php
-include 'includes/header_cliente.php'
-    ?>
+    include 'includes/header_cliente.php';     
+    session_start();
+
+// Verifica se usuário está logado
+if (!isset($_SESSION['usuario_id'], $_SESSION['usuario_email'])) {
+    // não logado
+    header('Location: index.php'); // ajuste caminho para sua página de login
+    exit;
+}
+
+// opcional: usuario logado. Pode usar $_SESSION['usuario_nome'] etc.
+?>   
+    
+
 
 <!-- Cabeçalho com imagem e frase de impacto -->
 <header class="masthead">
@@ -8,7 +20,9 @@ include 'includes/header_cliente.php'
         <div class="row gx-5 align-items-center">
             <div class="col-lg-6">
                 <div class="mb-5 mb-lg-0 text-center text-lg-start">
-                    <h1 class="display-1 lh-1 mb-3">Bem-vinda, Gabriela!</h1>
+                    <h1 class="display-1 lh-1 mb-3">
+                        Bem-vinda, <?= htmlspecialchars($_SESSION['usuario_nome']) ?>!
+                    </h1>
                     <p class="lead fw-normal text-muted mb-5">
                         Agora você está logado. Confira todas as novidades e produtos disponíveis.
                     </p>

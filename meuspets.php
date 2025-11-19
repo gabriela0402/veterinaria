@@ -1,124 +1,208 @@
 <?php
-    include 'includes/header_cliente.php';
-    include 'includes/conexao.php';
-    session_start();
+include 'includes/header_cliente.php';
+include 'includes/conexao.php';
+session_start();
 
-    // Temporário (depois tu usa $_SESSION['id_dono'])
-    $id_dono = 1;
+// Verifica se usuário está logado
+if (!isset($_SESSION['usuario_id'], $_SESSION['usuario_email'])) {
+    header('Location: index.php');
+    exit;
+}
 
-    // Buscar pets do dono logado
-    $stmt = $pdo->prepare("SELECT * FROM Animal WHERE idDono_animal = ?");
-    $stmt->execute([$id_dono]);
-    $pets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    ?>
+$usuario_id = $_SESSION['usuario_id'];
 
-    <main class="meuspets-container">
-        <section class="meuspets-section">
-            <!-- Cabeçalho da página -->
-            <div class="meuspets-header">
-                <h1 class="meuspets-title">Animais Cadastrados</h1>
-                <button class="meuspets-btn-cadastrar" data-bs-toggle="modal" data-bs-target="#cadastroPetModal">
-                    Cadastrar Pets
-                </button>
+// Busca pets do usuário
+$sql = "SELECT * FROM animal WHERE idDono_animal = :id";
+$stmt = $pdo->prepare($sql);
+$stmt->bindParam(':id', $usuario_id);
+$stmt->execute();
+$pets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<main class="meuspets-container">
+<section class="meuspets-section">
+
+    <div class="meuspets-header">
+        <h1 class="meuspets-title">Animais Cadastrados</h1>
+        <button class="meuspets-btn-cadastrar" data-bs-toggle="modal" data-bs-target="#cadastroPetModal">
+            Cadastrar Pets
+        </button>
+    </div>
+
+    <div class="meuspets-grid">
+
+    <?php foreach ($pets as $pet): ?>
+        <div class="meuspets-card">
+            <div class="meuspets-card-content">
+                <h5 class="meuspets-pet-name"><?= htmlspecialchars($pet['Nome']) ?></h5>
+                <p class="meuspets-pet-info">Espécie: <?= htmlspecialchars($pet['Especie']) ?></p>
+                <p class="meuspets-pet-info">Raça: <?= htmlspecialchars($pet['Raca']) ?></p>
+                <p class="meuspets-pet-info">Sexo: <?= htmlspecialchars($pet['Sexo']) ?></p>
+                <p class="meuspets-pet-info">Idade: <?= htmlspecialchars($pet['Idade']) ?></p>
+                <p class="meuspets-pet-info">Peso: <?= htmlspecialchars($pet['Peso']) ?></p>
+                <p class="meuspets-pet-info">Observação: <?= htmlspecialchars($pet['Observacao']) ?></p>
+
+                <!-- Botão Editar -->
+                <a href="#"
+                   class="meuspets-btn-editar"
+                   data-bs-toggle="modal"
+                   data-bs-target="#editarPetModal<?= $pet['ID_Animal'] ?>">
+                   Editar
+                </a>
+
+                <!-- Botão Excluir -->
+                <a href="crud/excluir_pet.php?id=<?= $pet['ID_Animal'] ?>"
+                   class="meuspets-btn-excluir"
+                   onclick="return confirm('Tem certeza que deseja excluir este pet?')">
+                   Excluir
+                </a>
             </div>
+        </div>
 
-            <!-- Cards dos pets -->
-            <div class="meuspets-grid">
-                <?php if (count($pets) > 0): ?>
-                    <?php foreach ($pets as $pet): ?>
-                        <div class="meuspets-card">
-                            <div class="meuspets-card-content">
-                                <h5 class="meuspets-pet-name"><?= htmlspecialchars($pet['Nome']) ?></h5>
-                                <p class="meuspets-pet-info">Espécie: <?= htmlspecialchars($pet['Especie']) ?></p>
-                                <p class="meuspets-pet-info">Raça: <?= htmlspecialchars($pet['Raca']) ?></p>
-                                <p class="meuspets-pet-info">Sexo: <?= htmlspecialchars($pet['Sexo']) ?></p>
-                                <p class="meuspets-pet-info">Idade: <?= htmlspecialchars($pet['Idade']) ?> anos</p>
-                                <p class="meuspets-pet-info">Peso: <?= htmlspecialchars($pet['Peso']) ?> kg</p>
-                                <p class="meuspets-pet-info">Observação: <?= htmlspecialchars($pet['Observacao']) ?></p>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p style="text-align:center;">Nenhum pet cadastrado ainda 💔</p>
-                <?php endif; ?>
-            </div>
-        </section>
-
-        <!-- Modal para cadastrar o Pet -->
-        <div class="modal fade" id="cadastroPetModal" tabindex="-1" aria-labelledby="cadastroPetModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
+        <!-- MODAL EDITAR -->
+        <div class="modal fade" id="editarPetModal<?= $pet['ID_Animal'] ?>" tabindex="-1">
+            <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header" style="background-color: #3e51fa;">
-                        <h5 class="modal-title" id="cadastroPetModalLabel" style="color: white;">Cadastre um novo pet</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Pet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body">
-                        <form action="crud/inserir_pet.php" method="POST">
-                            <div class="mb-3">
-                                <label for="petName" class="form-label">Nome do Pet</label>
-                                <input type="text" class="form-control" id="petName" name="Nome" required>
-                            </div>
+
+                    <form action="crud/atualizar_pet.php" method="POST">
+                        <div class="modal-body">
+
+                            <input type="hidden" name="ID_Animal" value="<?= $pet['ID_Animal'] ?>">
 
                             <div class="mb-3">
-                                <label for="petEspecie" class="form-label">Espécie</label>
-                                <select class="form-control" id="petEspecie" name="Especie" required>
-                                    <option value="" disabled selected>Selecione a espécie</option>
-                                    <option value="Cachorro">Cachorro</option>
-                                    <option value="Gato">Gato</option>
-                                    <option value="Pássaro">Pássaro</option>
-                                    <option value="Coelho">Coelho</option>
-                                    <option value="Hamster">Hamster</option>
-                                    <option value="Outro">Outro</option>
-                                </select>
+                                <label class="form-label">Nome</label>
+                                <input type="text" class="form-control" name="Nome" value="<?= htmlspecialchars($pet['Nome']) ?>">
                             </div>
 
                             <div class="mb-3">
-                                <label for="petRaca" class="form-label">Raça</label>
-                                <input type="text" class="form-control" id="petRaca" name="Raca" required>
+                                <label class="form-label">Espécie</label>
+                                <input type="text" class="form-control" name="Especie" value="<?= htmlspecialchars($pet['Especie']) ?>">
                             </div>
 
                             <div class="mb-3">
-                                <label for="petIdade" class="form-label">Idade</label>
-                                <input type="number" class="form-control" id="petIdade" name="Idade" required>
+                                <label class="form-label">Raça</label>
+                                <input type="text" class="form-control" name="Raca" value="<?= htmlspecialchars($pet['Raca']) ?>">
                             </div>
 
                             <div class="mb-3">
-                                <label for="petPeso" class="form-label">Peso (kg)</label>
-                                <input type="text" class="form-control" id="petPeso" name="Peso" required>
+                                <label class="form-label">Sexo</label>
+                                <input type="text" class="form-control" name="Sexo" value="<?= htmlspecialchars($pet['Sexo']) ?>">
                             </div>
 
                             <div class="mb-3">
-                                <label for="petSexo" class="form-label">Sexo</label>
-                                <select class="form-control" id="petSexo" name="Sexo" required>
-                                    <option value="" disabled selected>Selecione</option>
-                                    <option value="Macho">Macho</option>
-                                    <option value="Fêmea">Fêmea</option>
-                                </select>
+                                <label class="form-label">Idade</label>
+                                <input type="text" class="form-control" name="Idade" value="<?= htmlspecialchars($pet['Idade']) ?>">
                             </div>
 
                             <div class="mb-3">
-                                <label for="petObs" class="form-label">Observação (opcional)</label>
-                                <input type="text" class="form-control" id="petObs" name="Observacao">
+                                <label class="form-label">Peso</label>
+                                <input type="text" class="form-control" name="Peso" value="<?= htmlspecialchars($pet['Peso']) ?>">
                             </div>
 
-                            <input type="hidden" name="idDono_animal" value="<?= $id_dono ?>">
-
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary"
-                                    style="background-color: #3e51fa;">Cadastrar</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <div class="mb-3">
+                                <label class="form-label">Observação</label>
+                                <input type="text" class="form-control" name="Observacao" value="<?= htmlspecialchars($pet['Observacao']) ?>">
                             </div>
-                        </form>
-                    </div>
+
+                            <input type="hidden" name="idDono_animal" value="<?= $usuario_id ?>">
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+
+                    </form>
+
                 </div>
             </div>
         </div>
-    </main>
 
-<style>
+    <?php endforeach; ?>
 
-</style>
+    </div> <!-- .meuspets-grid -->
+</section>
+
+<!-- MODAL CADASTRAR PET -->
+<div class="modal fade" id="cadastroPetModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header" style="background-color: #3e51fa;">
+                <h5 class="modal-title" style="color:white;">Cadastre um novo pet</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="crud/inserir_pet.php" method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Pet</label>
+                        <input type="text" class="form-control" name="Nome" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Espécie</label>
+                        <select class="form-control" name="Especie" required>
+                            <option value="" disabled selected>Selecione</option>
+                            <option value="Cachorro">Cachorro</option>
+                            <option value="Gato">Gato</option>
+                            <option value="Pássaro">Pássaro/Ave</option>
+                            <option value="Coelho">Coelho</option>
+                            <option value="Hamster">Hamster/Rato</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Raça</label>
+                        <input type="text" class="form-control" name="Raca" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Idade</label>
+                        <input type="text" class="form-control" name="Idade" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Peso</label>
+                        <input type="text" class="form-control" name="Peso" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Sexo</label>
+                        <select class="form-control" name="Sexo" required>
+                            <option value="" disabled selected>Selecione</option>
+                            <option value="Macho">Macho</option>
+                            <option value="Fêmea">Fêmea</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Observação</label>
+                        <input type="text" class="form-control" name="Observacao">
+                    </div>
+
+                    <input type="hidden" name="idDono_animal" value="<?= $usuario_id ?>">
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</main>
 
 <?php include 'includes/footer.php'; ?>

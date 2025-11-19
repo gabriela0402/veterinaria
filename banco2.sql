@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 19/11/2025 às 02:40
+-- Tempo de geração: 19/11/2025 às 03:52
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `veterinaria`
 --
-CREATE DATABASE IF NOT EXISTS `veterinaria` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `veterinaria`;
 
 -- --------------------------------------------------------
 
@@ -49,7 +47,11 @@ INSERT INTO `animal` (`Raca`, `Nome`, `ID_Animal`, `Idade`, `Sexo`, `Especie`, `
 ('Persa', 'Betty', 2, 5, 'Fêmea', 'Gato', 5.60, 'Alergia leve', 2),
 ('Persa', 'Jasmin', 4, 5, 'Fêmea', 'Gato', 13.00, 'Ela é pequena', 1),
 ('Pastor Alemão', 'Elizabeth', 5, 2, 'Fêmea', 'Cachorro', 22.00, 'Ela é grande', 2),
-('Persa', 'Taylor', 6, 11, 'Macho', 'Gato', 12.00, 'Ele é agitado.', 1);
+('Persa', 'Taylor', 6, 11, 'Macho', 'Gato', 12.00, 'Ele é agitado.', 1),
+('Labrador', 'Justin', 10, 5, 'Macho', 'Cachorro', 50.00, 'come muito', 1),
+('Beija-flor', 'Shawn', 17, 11, 'Fêmea', 'Gato', 11.00, 'Ela é pequena', 2),
+('Beija-flor', 'Taylor', 20, 5, 'Macho', 'Cachorro', 13.00, 'ela é violenta.', 5),
+('Labrador', 'Justin', 21, 2, 'Macho', 'Cachorro', 50.00, 'Ela é pequena', 6);
 
 -- --------------------------------------------------------
 
@@ -132,6 +134,7 @@ INSERT INTO `funcionario` (`ID_veterinario`, `CRMV`, `Nome`, `Email`, `Telefone`
 
 CREATE TABLE `usuario` (
   `ID_usuario` int(11) NOT NULL,
+  `idDono_animal` int(11) DEFAULT NULL,
   `Telefone` varchar(20) DEFAULT NULL,
   `Tipo` varchar(20) DEFAULT NULL,
   `CPF` varchar(14) DEFAULT NULL,
@@ -144,9 +147,13 @@ CREATE TABLE `usuario` (
 -- Despejando dados para a tabela `usuario`
 --
 
-INSERT INTO `usuario` (`ID_usuario`, `Telefone`, `Tipo`, `CPF`, `Email`, `Senha`, `Nome`) VALUES
-(1, '1111111111', NULL, '1111111111', 'gabi@gmail.com', '$2y$10$Q0VoBwD4xlLA4KyO9MRYduhPl0cuO/qY6qrSIzbI60b09ss36Z8kK', 'Gabriela Romano'),
-(2, '13131313', NULL, '1111111112', 'a@gmail.com', '$2y$10$HeXc0SbvVty8.2c1.9VPSeKtC2uksnRVz4CfFFzux4yF8fxly/5xi', 'Taylor Swift');
+INSERT INTO `usuario` (`ID_usuario`, `idDono_animal`, `Telefone`, `Tipo`, `CPF`, `Email`, `Senha`, `Nome`) VALUES
+(1, NULL, '1111111111', NULL, '1111111111', 'gabi@gmail.com', '$2y$10$Q0VoBwD4xlLA4KyO9MRYduhPl0cuO/qY6qrSIzbI60b09ss36Z8kK', 'Gabriela Romano'),
+(2, NULL, '13131313', NULL, '1111111112', 'a@gmail.com', '$2y$10$HeXc0SbvVty8.2c1.9VPSeKtC2uksnRVz4CfFFzux4yF8fxly/5xi', 'Taylor Swift'),
+(3, NULL, '12', NULL, '12', 'sofi@gmail.com', '$2y$10$V6UvCH6m.ZBtGpu29KjaUOP6th3eNoHF3bouNL/veaRr0kZBrKG1u', 'Sofia'),
+(4, NULL, '13131313', NULL, '1111111112', 'sofia@gmail.com', '$2y$10$py.gB0VTdJqDujXCVGDcmOruBCY7gCfJ7sONV.bl3.ztds96DhUZe', 'Sofia'),
+(5, NULL, '13131313', NULL, '1111111111', 'c@gmail.com', '$2y$10$oa6KNb1w6Ja7IufUDvz3P.ur.v4L2ylURG3ux9tYpXzpJyyw0erpq', 'Clara'),
+(6, NULL, '13131313', NULL, '1111111111', 'isa@gmail.com', '$2y$10$Iyq2J78cOueOM1B7130BZup3NshnXFD9dXx4rR4v9hGeEuBHmlvfG', 'Isabela');
 
 --
 -- Índices para tabelas despejadas
@@ -193,7 +200,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de tabela `animal`
 --
 ALTER TABLE `animal`
-  MODIFY `ID_Animal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID_Animal` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de tabela `consulta`
@@ -217,7 +224,7 @@ ALTER TABLE `funcionario`
 -- AUTO_INCREMENT de tabela `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `ID_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restrições para tabelas despejadas
@@ -227,7 +234,7 @@ ALTER TABLE `usuario`
 -- Restrições para tabelas `animal`
 --
 ALTER TABLE `animal`
-  ADD CONSTRAINT `animal_ibfk_1` FOREIGN KEY (`idDono_animal`) REFERENCES `dono_animal` (`ID_Dono_animal`);
+  ADD CONSTRAINT `animal_ibfk_1` FOREIGN KEY (`idDono_animal`) REFERENCES `usuario` (`ID_usuario`) ON DELETE CASCADE;
 
 --
 -- Restrições para tabelas `consulta`

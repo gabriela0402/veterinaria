@@ -10,7 +10,9 @@
     $peso = $_POST['Peso'];
     $sexo = $_POST['Sexo'];
     $obs = $_POST['Observacao'];
-    $id_dono = $_SESSION['id_dono'];
+
+    // PEGANDO O ID DO DONO CORRETO
+    $id_dono = $_SESSION['usuario_id']; // <-- AQUI ESTAVA O ERRO
 
     // Inserção no banco
     $sql = "INSERT INTO Animal (Nome, Especie, Raca, Idade, Sexo, Peso, Observacao, idDono_animal)
